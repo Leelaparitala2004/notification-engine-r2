@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import {
   Box, Typography, Paper, Grid, Card, CardContent,
-  CircularProgress, Chip
+  CircularProgress
 } from '@mui/material';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   Legend, ResponsiveContainer, PieChart, Pie, Cell
 } from 'recharts';
 import axios from 'axios';
+
+const API_BASE_URL = 'https://exquisite-harmony-production.up.railway.app';
 
 export default function Metrics() {
   const [metrics, setMetrics] = useState(null);
@@ -19,7 +21,7 @@ export default function Metrics() {
 
   const fetchMetrics = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/v2/metrics');
+      const res = await axios.get(`${API_BASE_URL}/api/v2/metrics`);
       setMetrics(res.data);
     } catch (error) {
       console.error('Error fetching metrics:', error);
@@ -55,7 +57,6 @@ export default function Metrics() {
       </Typography>
 
       <Grid container spacing={3}>
-        {/* Summary Cards */}
         <Grid item xs={12} md={3}>
           <Card>
             <CardContent>
@@ -101,7 +102,6 @@ export default function Metrics() {
           </Card>
         </Grid>
 
-        {/* Decision Distribution Chart */}
         <Grid item xs={12} md={6}>
           <Paper sx={{ p: 3 }}>
             <Typography variant="h6" gutterBottom>Decision Distribution</Typography>
@@ -127,7 +127,6 @@ export default function Metrics() {
           </Paper>
         </Grid>
 
-        {/* Processing Modes Chart */}
         <Grid item xs={12} md={6}>
           <Paper sx={{ p: 3 }}>
             <Typography variant="h6" gutterBottom>Processing Modes</Typography>
@@ -143,7 +142,6 @@ export default function Metrics() {
           </Paper>
         </Grid>
 
-        {/* Hourly Trend */}
         <Grid item xs={12}>
           <Paper sx={{ p: 3 }}>
             <Typography variant="h6" gutterBottom>24-Hour Activity</Typography>

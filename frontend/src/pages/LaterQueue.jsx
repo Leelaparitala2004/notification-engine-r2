@@ -8,6 +8,8 @@ import {
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import axios from 'axios';
 
+const API_BASE_URL = 'https://exquisite-harmony-production.up.railway.app';
+
 export default function LaterQueue() {
   const [queue, setQueue] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -16,14 +18,13 @@ export default function LaterQueue() {
 
   useEffect(() => {
     fetchQueue();
-    const interval = setInterval(fetchQueue, 10000); // Refresh every 10 seconds
+    const interval = setInterval(fetchQueue, 10000);
     return () => clearInterval(interval);
   }, []);
 
   const fetchQueue = async () => {
     try {
-      // Get LATER decisions from audit log
-      const res = await axios.get(`http://localhost:5000/api/v2/history/test_user_123`, {
+      const res = await axios.get(`${API_BASE_URL}/api/v2/history/test_user_123`, {
         params: { decision: 'later', limit: 50 }
       });
       setQueue(res.data.decisions || []);
@@ -36,8 +37,7 @@ export default function LaterQueue() {
 
   const handleProcessNow = async (event) => {
     try {
-      // Reclassify as NOW
-      const res = await axios.post('http://localhost:5000/api/v2/classify', {
+      await axios.post(`${API_BASE_URL}/api/v2/classify`, {
         event_id: event.event_id,
         user_id: event.user_id,
         event_type: event.event_type,

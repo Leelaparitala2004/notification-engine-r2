@@ -8,6 +8,8 @@ import {
 import SearchIcon from '@mui/icons-material/Search';
 import axios from 'axios';
 
+const API_BASE_URL = 'https://exquisite-harmony-production.up.railway.app';
+
 export default function AuditLog() {
   const [logs, setLogs] = useState([]);
   const [page, setPage] = useState(0);
@@ -20,8 +22,7 @@ export default function AuditLog() {
   const fetchLogs = async () => {
     setLoading(true);
     try {
-      // Using a sample user_id - in production this would be from context
-      const res = await axios.get(`http://localhost:5000/api/v2/history/test_user_123`, {
+      const res = await axios.get(`${API_BASE_URL}/api/v2/history/test_user_123`, {
         params: {
           page: page + 1,
           limit: rowsPerPage,

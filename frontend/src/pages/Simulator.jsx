@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { 
   Container, Box, Typography, TextField, Button, Paper, 
-  Grid, MenuItem, Alert, Chip, Divider 
+  Grid, MenuItem, Chip, Divider, Alert, CircularProgress
 } from '@mui/material';
 import axios from 'axios';
+
+const API_BASE_URL = 'https://exquisite-harmony-production.up.railway.app';
 
 export default function Simulator() {
   const [event, setEvent] = useState({
@@ -24,7 +26,7 @@ export default function Simulator() {
   const submitEvent = async () => {
     setLoading(true);
     try {
-      const res = await axios.post('http://localhost:5000/api/v2/classify', event);
+      const res = await axios.post(`${API_BASE_URL}/api/v2/classify`, event);
       setResult(res.data);
     } catch (error) {
       console.error('Error:', error);
@@ -124,7 +126,7 @@ export default function Simulator() {
                   disabled={loading}
                   fullWidth
                 >
-                  {loading ? 'Classifying...' : 'Classify Event'}
+                  {loading ? <CircularProgress size={24} /> : 'Classify Event'}
                 </Button>
               </Grid>
             </Grid>

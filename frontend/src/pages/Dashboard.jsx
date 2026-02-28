@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { 
-  Container, Grid, Paper, Typography, Box, 
+  Grid, Paper, Typography, Box, 
   Card, CardContent, Chip, CircularProgress 
 } from '@mui/material';
 import axios from 'axios';
+
+const API_BASE_URL = 'https://exquisite-harmony-production.up.railway.app';
 
 export default function Dashboard() {
   const [metrics, setMetrics] = useState(null);
@@ -11,13 +13,13 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchMetrics();
-    const interval = setInterval(fetchMetrics, 30000); // Refresh every 30 seconds
+    const interval = setInterval(fetchMetrics, 30000);
     return () => clearInterval(interval);
   }, []);
 
   const fetchMetrics = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/v2/metrics');
+      const res = await axios.get(`${API_BASE_URL}/api/v2/metrics`);
       setMetrics(res.data);
     } catch (error) {
       console.error('Error fetching metrics:', error);
@@ -42,7 +44,6 @@ export default function Dashboard() {
       </Typography>
 
       <Grid container spacing={3}>
-        {/* Summary Cards */}
         <Grid item xs={12} sm={6} md={3}>
           <Card>
             <CardContent>
@@ -91,7 +92,6 @@ export default function Dashboard() {
           </Card>
         </Grid>
 
-        {/* Processing Modes */}
         <Grid item xs={12} md={6}>
           <Paper sx={{ p: 3 }}>
             <Typography variant="h6" gutterBottom>Processing Modes</Typography>
@@ -115,7 +115,6 @@ export default function Dashboard() {
           </Paper>
         </Grid>
 
-        {/* Suppression Reasons */}
         <Grid item xs={12} md={6}>
           <Paper sx={{ p: 3 }}>
             <Typography variant="h6" gutterBottom>Suppression Reasons</Typography>
