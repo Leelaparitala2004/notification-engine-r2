@@ -14,10 +14,20 @@ const app = express();
 
 // Security middleware
 app.use(helmet());
+
+// Updated CORS configuration - Allow both localhost AND Vercel
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: [
+    'http://localhost:3000',
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'http://localhost:5175',
+    'https://notification-engine-r2.vercel.app',
+    process.env.FRONTEND_URL
+  ].filter(Boolean), // Remove any undefined values
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
 }));
 
 // Rate limiting

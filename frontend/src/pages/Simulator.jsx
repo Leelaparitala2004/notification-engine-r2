@@ -18,6 +18,7 @@ export default function Simulator() {
   });
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [errorDetails, setErrorDetails] = useState('');
 
   const eventTypes = ['security_alert', 'payment', 'order_shipped', 'promo', 'marketing', 'system', 'message'];
   const channels = ['push', 'sms', 'email', 'in_app'];
@@ -25,12 +26,36 @@ export default function Simulator() {
 
   const submitEvent = async () => {
     setLoading(true);
+    setErrorDetails('');
+    
     try {
-      const res = await axios.post(`${API_BASE_URL}/api/v2/classify`, event);
+      console.log('Sending to:', `${API_BASE_URL}/api/v2/classify`);
+      console.log('Event data:', event);
+      
+      const res = await axios.post(`${API_BASE_URL}/api/v2/classify`, event, {
+        headers: { 'Content-Type': 'application/json' },
+        timeout: 10000 // 10 second timeout
+      });
+      
+      console.log('Response:', res.data);
       setResult(res.data);
     } catch (error) {
-      console.error('Error:', error);
-      setResult({ error: 'Failed to classify' });
+      console.error('Full error:', error);
+      
+      if (error.code === 'ECONNABORTED') {
+        setResult({ error: 'Request timeout - backend not responding' });
+      } else if (error.response) {
+        // The request was made and the server responded with a status code
+        setResult({ error: `Server error: ${error.response.status} - ${JSON.stringify(error.response.data)}` });
+      } else if (error.request) {
+        // The request was made but no response was received
+        setResult({ error: 'No response from backend - is it running?' });
+      } else {
+        // Something happened in setting up the request
+        setResult({ error: `Request failed: ${error.message}` });
+      }
+      
+      setErrorDetails(error.message);
     } finally {
       setLoading(false);
     }
@@ -181,6 +206,11 @@ export default function Simulator() {
           {result?.error && (
             <Paper sx={{ p: 3, bgcolor: '#ffebee' }}>
               <Alert severity="error">{result.error}</Alert>
+              {errorDetails && (
+                <Typography variant="caption" sx={{ mt: 1, display: 'block' }}>
+                  Details: {errorDetails}
+                </Typography>
+              )}
             </Paper>
           )}
         </Grid>
